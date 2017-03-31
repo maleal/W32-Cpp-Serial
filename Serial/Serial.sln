@@ -1,0 +1,26 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Serial", "Serial\Serial.vcxproj", "{F7233585-219A-4806-9735-8E0A67B93388}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TestingSerialLib", "..\TestingSerialLib\TestingSerialLib.vcxproj", "{7B471341-E9F6-46C5-9943-6F33298A1D80}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{F7233585-219A-4806-9735-8E0A67B93388}.Debug|Win32.ActiveCfg = Debug|Win32
+		{F7233585-219A-4806-9735-8E0A67B93388}.Debug|Win32.Build.0 = Debug|Win32
+		{F7233585-219A-4806-9735-8E0A67B93388}.Release|Win32.ActiveCfg = Release|Win32
+		{F7233585-219A-4806-9735-8E0A67B93388}.Release|Win32.Build.0 = Release|Win32
+		{7B471341-E9F6-46C5-9943-6F33298A1D80}.Debug|Win32.ActiveCfg = Debug|Win32
+		{7B471341-E9F6-46C5-9943-6F33298A1D80}.Debug|Win32.Build.0 = Debug|Win32
+		{7B471341-E9F6-46C5-9943-6F33298A1D80}.Release|Win32.ActiveCfg = Release|Win32
+		{7B471341-E9F6-46C5-9943-6F33298A1D80}.Release|Win32.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
