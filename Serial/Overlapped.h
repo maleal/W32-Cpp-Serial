@@ -21,6 +21,9 @@ public:
 	LONG Setup(CSerial::EBaudrate eBaudrate, CSerial::EDataBits eDataBits, CSerial::EParity eParity, CSerial::EStopBits eStopBits);
 	
 	LONG Read (char* szBuffer, int sizeofBuffer);
+	LONG Readii (char* szBuffer, int sizeofBuffer);
+
+	LONG Write(char* szBuffer);
 
 	LONG ShowError (LONG lError, LPCTSTR lptszMessage);
 };

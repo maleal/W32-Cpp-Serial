@@ -51,6 +51,7 @@ LONG CAsynSerial::Open (LPCTSTR lpszDevice, DWORD dwInQueue, DWORD dwOutQueue) {
 		if (lLastError != ERROR_SUCCESS)
 			return this->ShowError(serial.GetLastError(), _T("Unable to open COM-port"));
 		else {
+			serial.Purge();
 			fContinue=true;
 		}
 		return 0;
@@ -101,10 +102,21 @@ LONG CAsynSerial::Setup(CSerial::EBaudrate eBaudrate, CSerial::EDataBits eDataBi
 	return 0;
 }
 	
+LONG CAsynSerial::Write(char* szBuffer) {
 
+	if(fContinue) {
+		lLastError = this->serial.Write(szBuffer);
+		if (lLastError != ERROR_SUCCESS)
+			return ShowError(this->serial.GetLastError(), _T("Unable to Write."));
+	}else
+		ShowError(0, _T("Unable to Continue, variable 'fContinue' is set to false."));
+	return 0;
+
+
+}
 
 LONG CAsynSerial::Read (char* szBuffer, int sizeofBuffer) {
-		
+		serial.Purge();
 		while(fContinue)
 		{
 			
@@ -180,12 +192,14 @@ LONG CAsynSerial::Read (char* szBuffer, int sizeofBuffer) {
 					{
 						// Read data, until there is nothing left
 						DWORD dwBytesRead = 0;
+						/*
 						do
 						{
-							char szBuffer[101];
+							//char szBuffer[101];
 
 							// Read data from the COM-port
-							lLastError = this->serial.Read(szBuffer,sizeof(szBuffer)-1,&dwBytesRead);
+							//lLastError = this->serial.Read(szBuffer,sizeof(szBuffer)-1,&dwBytesRead);
+							lLastError = this->serial.Read(szBuffer,sizeofBuffer-1,&dwBytesRead);
 							if (lLastError != ERROR_SUCCESS)
 								return this->ShowError(this->serial.GetLastError(), _T("Unable to read from COM-port."));
 
@@ -195,10 +209,57 @@ LONG CAsynSerial::Read (char* szBuffer, int sizeofBuffer) {
 								szBuffer[dwBytesRead] = '\0';
 
 								// Display the data
-								printf("%s", szBuffer);
+								printf("%s\n", szBuffer);
 							}
 						}
 						while (dwBytesRead > 0);
+						*/
+
+						int count=strlen("ready");
+						do
+								{
+									//char szBuffer[101];
+
+									// Read data from the COM-port
+									//lLastError = this->serial.Read(szBuffer,sizeof(szBuffer)-1,&dwBytesRead);
+									lLastError = this->serial.Read(szBuffer, count, &dwBytesRead);
+									if (lLastError != ERROR_SUCCESS)
+										return this->ShowError(this->serial.GetLastError(), _T("Unable to read from COM-port."));
+									//count+=dwBytesRead;
+								}while (count != dwBytesRead);
+						szBuffer[count]='\0';
+						printf("%s\n", szBuffer);
+						count=0;
+						do{
+								count=0;
+								do
+								{
+									//char szBuffer[101];
+
+									// Read data from the COM-port
+									//lLastError = this->serial.Read(szBuffer,sizeof(szBuffer)-1,&dwBytesRead);
+									lLastError = this->serial.Read(&szBuffer[count], 3-count, &dwBytesRead);
+									if (lLastError != ERROR_SUCCESS)
+										return this->ShowError(this->serial.GetLastError(), _T("Unable to read from COM-port."));
+									count+=dwBytesRead;
+								}while (count < 3);
+								szBuffer[3]='\0';
+
+								int len = atoi(szBuffer);
+								do
+								{
+							
+									lLastError = this->serial.Read(&szBuffer[count], len-count, &dwBytesRead);
+									if (lLastError != ERROR_SUCCESS)
+										return this->ShowError(this->serial.GetLastError(), _T("Unable to read from COM-port."));
+									count+=dwBytesRead;
+								}while (count < len);
+								szBuffer[count]='\0';
+								// Display the data
+								printf("%s\n", szBuffer);
+								count=0;
+						}while(1);
+
 					}
 				}
 				break;
@@ -224,3 +285,142 @@ LONG CAsynSerial::Read (char* szBuffer, int sizeofBuffer) {
 		return 0;
 	}
 
+
+	LONG CAsynSerial::Readii (char* szBuffer, int sizeofBuffer) {
+		serial.Purge();
+		if(fContinue)
+		{
+			
+			// Wait for an event
+			lLastError = serial.WaitEvent(&ov);
+			if (lLastError != ERROR_SUCCESS)
+				return ShowError(this->serial.GetLastError(), _T("Unable to wait for a COM-port event."));
+
+			// Setup array of handles in which we are interested
+			HANDLE ahWait[2];
+			ahWait[0] = hevtOverlapped;
+			ahWait[1] = hevtStop;
+
+			// Wait until something happens
+			switch (::WaitForMultipleObjects(sizeof(ahWait)/sizeof(*ahWait),ahWait,FALSE,INFINITE))
+			{
+				case WAIT_OBJECT_0:
+				{
+					// Save event
+					const CSerial::EEvent eEvent = serial.GetEventType();
+
+					// Handle break event
+					if (eEvent & CSerial::EEventBreak)
+					{
+						printf("\n### BREAK received ###\n");
+					}
+
+					// Handle CTS event
+					if (eEvent & CSerial::EEventCTS)
+					{
+						printf("\n### Clear to send %s ###\n", serial.GetCTS()?"on":"off");
+					}
+
+					// Handle DSR event
+					if (eEvent & CSerial::EEventDSR)
+					{
+						printf("\n### Data set ready %s ###\n", serial.GetDSR()?"on":"off");
+					}
+
+					// Handle error event
+					if (eEvent & CSerial::EEventError)
+					{
+						printf("\n### ERROR: ");
+						switch (serial.GetError())
+						{
+						case CSerial::EErrorBreak:		printf("Break condition");			break;
+						case CSerial::EErrorFrame:		printf("Framing error");			break;
+						case CSerial::EErrorIOE:		printf("IO device error");			break;
+						case CSerial::EErrorMode:		printf("Unsupported mode");			break;
+						case CSerial::EErrorOverrun:	printf("Buffer overrun");			break;
+						case CSerial::EErrorRxOver:		printf("Input buffer overflow");	break;
+						case CSerial::EErrorParity:		printf("Input parity error");		break;
+						case CSerial::EErrorTxFull:		printf("Output buffer full");		break;
+						default:						printf("Unknown");					break;
+						}
+						printf(" ###\n");
+					}
+
+					// Handle ring event
+					if (eEvent & CSerial::EEventRing)
+					{
+						printf("\n### RING ###\n");
+					}
+
+					// Handle RLSD/CD event
+					if (eEvent & CSerial::EEventRLSD)
+					{
+						printf("\n### RLSD/CD %s ###\n", this->serial.GetRLSD()?"on":"off");
+					}
+
+					// Handle data receive event
+					if (eEvent & CSerial::EEventRecv)
+					{
+						// Read data, until there is nothing left
+						DWORD dwBytesRead = 0;
+						
+						
+						int count=0;
+						do
+						{
+							// Read data from the COM-port
+							//lLastError = this->serial.Read(szBuffer,sizeof(szBuffer)-1,&dwBytesRead);
+							lLastError = this->serial.Read(&szBuffer[count], 6-count, &dwBytesRead);
+							if (lLastError != ERROR_SUCCESS)
+								return this->ShowError(this->serial.GetLastError(), _T("Unable to read from COM-port."));
+							count+=dwBytesRead;
+						}while (count < 6);
+						szBuffer[6]='\0';
+#ifdef C_PRINTF_DEBUG
+						fprintf(stdout, "%s\n", szBuffer);
+#endif//C_PRINTF_DEBUG
+						if(!strncmp(&szBuffer[3], "STx", 3)) {
+							char tempBuff[4];
+							strncpy(tempBuff, szBuffer, 3);
+
+							int len = atoi(tempBuff);
+							do
+							{
+							
+								lLastError = this->serial.Read(&szBuffer[count], len-count, &dwBytesRead);
+								if (lLastError != ERROR_SUCCESS)
+									return this->ShowError(this->serial.GetLastError(), _T("Unable to read from COM-port."));
+								count+=dwBytesRead;
+							}while (count < len);
+							szBuffer[count]='\0';
+#ifdef C_PRINTF_DEBUG
+							// Display the data
+							fprintf(stdout, "%s\n", szBuffer);
+#endif//C_PRINTF_DEBUG
+						}
+					
+					}
+				}
+				break;
+
+				case WAIT_OBJECT_0+1:
+				{
+					// Set the continue bit to false, so we'll exit
+					fContinue = false;
+				}
+				break;
+
+				default:
+				{
+					// Something went wrong
+					return ShowError(this->serial.GetLastError(), _T("Error while calling WaitForMultipleObjects."));
+				}
+				break;
+			}
+		}else
+			ShowError(0, _T("iinternal 'fContinue' variable is set to false."));
+
+		// Close the port again
+		//serial.Close();
+		return 0;
+	}

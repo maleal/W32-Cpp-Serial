@@ -1007,7 +1007,7 @@ LONG CSerial::Write (const void* pData, size_t iLen, DWORD* pdwWritten, LPOVERLA
 	_ASSERTE(!m_hevtOverlapped || HasOverlappedIoCompleted(lpOverlapped));
 
 	// Write the data
-	if (!::WriteFile(m_hFile,pData,iLen,pdwWritten,lpOverlapped))
+	if (!::WriteFile(m_hFile, pData, iLen, pdwWritten, lpOverlapped))
 	{
 		// Set the internal error code
 		long lLastError = ::GetLastError();

@@ -17,21 +17,61 @@
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include <windows.h>
 #include <cstdio>
+#include <algorithm>	// remove and remove_if
+#include <vector>
 #include <tchar.h>
 #include "Serial.h"
 #include "Overlapped.h"
+#include "Util.h"
 #include <exception>
+
+#include <string>
+
 
 int main(int argc, char* argv[]) {
 	char buffer[1024+1];
+
 	try{
+		
 		CAsynSerial Ardu;
 		Ardu.Open(_T("COM3"),0,0);
-		Ardu.Setup(CSerial::EBaud38400,CSerial::EData8,CSerial::EParNone,CSerial::EStop1);
-		Ardu.Read(buffer, 1024+1);
+		Ardu.Setup(CSerial::EBaud115200,CSerial::EData8,CSerial::EParNone,CSerial::EStop1);
 
+		//Ardu.Write("ready");
+		//Ardu.Read(buffer, 1024+1);
+		
+		std::string myStr;
+		std::string delim("|");
+				
+		float fYaw, fPitch, fRoll;
+		std::vector<std::string> tokens;
+		
+		do{
+			Ardu.Readii(buffer, 1024+1);
+#ifdef C_PRINTF_DEBUG
+			fprintf(stdout, "We are reading:[%s]\n", buffer);
+#endif//C_PRINTF_DEBUG
+			
+			myStr.assign(buffer);
+			//remuving spaces
+			myStr.erase(remove_if(myStr.begin(), myStr.end(), isspace), myStr.end());
+
+#ifdef C_PRINTF_DEBUG
+			fprintf(stdout, "WithOut Space[%s]\n",myStr.c_str());
+#endif//C_PRINTF_DEBUG
+
+			my_split(myStr, tokens, delim);
+			GetYPRValuesFromVector(tokens, fYaw, fPitch, fRoll);
+						
+			memset(buffer, '\0', 1024+1);
+			myStr.clear();
+			tokens.clear();
+			
+
+		}while(1);
+		
 	}catch(std::exception &ex) {
 		fprintf(stderr, "Cosa:%s", ex.what()); 
 	}
 	return 0;
-}
+};
