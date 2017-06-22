@@ -20,13 +20,12 @@
 #include <algorithm>	// remove and remove_if
 #include <vector>
 #include <tchar.h>
-#include "Serial.h"
-#include "Overlapped.h"
-#include "Util.h"
 #include <exception>
-
 #include <string>
+#include "Overlapped.h"
 
+
+std::chrono::steady_clock::time_point beforeT = std::chrono::steady_clock::now();
 
 int main(int argc, char* argv[]) {
 	char buffer[1024+1];
@@ -34,7 +33,7 @@ int main(int argc, char* argv[]) {
 	try{
 		
 		CAsynSerial Ardu;
-		Ardu.Open(_T("COM3"),0,0);
+		Ardu.Open(_T("COM1"),0,0);
 		Ardu.Setup(CSerial::EBaud115200,CSerial::EData8,CSerial::EParNone,CSerial::EStop1);
 
 		//Ardu.Write("ready");
@@ -43,7 +42,7 @@ int main(int argc, char* argv[]) {
 		std::string myStr;
 		std::string delim("|");
 				
-		float fYaw, fPitch, fRoll;
+		float fYaw, fPitch, fRoll, fdeltaT;
 		std::vector<std::string> tokens;
 		
 		do{
@@ -61,7 +60,7 @@ int main(int argc, char* argv[]) {
 #endif//C_PRINTF_DEBUG
 
 			my_split(myStr, tokens, delim);
-			GetYPRValuesFromVector(tokens, fYaw, fPitch, fRoll);
+			GetYPRValuesFromVector(tokens, fYaw, fPitch, fRoll, fdeltaT);
 						
 			memset(buffer, '\0', 1024+1);
 			myStr.clear();

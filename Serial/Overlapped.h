@@ -2,6 +2,7 @@
 #ifndef __OVERLAPPED_H
 #define __OVERLAPPED_H
 #include "Serial.h"
+#include "Util.h"
 #include <Windows.h>
 
 

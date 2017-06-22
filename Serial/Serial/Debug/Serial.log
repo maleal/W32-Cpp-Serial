@@ -1,0 +1,8 @@
+﻿  Util.cpp
+c:\users\majlfuentes\documents\workspace\workspace-comm\w32-cpp-serial\serial\util.cpp(137): warning C4244: '=': conversion from '__int64' to 'double', possible loss of data
+  Serial.cpp
+  Overlapped.cpp
+c:\users\majlfuentes\documents\workspace\workspace-comm\w32-cpp-serial\serial\overlapped.cpp(383): warning C4996: 'strncpy': This function or variable may be unsafe. Consider using strncpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  c:\program files (x86)\windows kits\10\include\10.0.10240.0\ucrt\string.h(346): note: see declaration of 'strncpy'
+  Generating Code...
+  Serial.vcxproj -> C:\Users\majlfuentes\Documents\WorkSpace\WorkSpace-Comm\W32-Cpp-Serial\Serial\Debug\Serial.lib
