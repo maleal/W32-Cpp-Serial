@@ -42,7 +42,7 @@ bool is_number(const std::string& s)
 void my_split(const std::string& str, std::vector<std::string>& tokens, const std::string& delim)
 {
 	//El formato del msg que recibo desde Arduino esta armado de la siguiente forma:
-	//043STx|yaw= 80.56|pitch= 18.43|roll= 10.29|End
+	//043Stx|yaw= 80.56|pitch= 18.43|roll= 10.29|End
 	std::string tmp;
 	size_t prev = 0, pos, lenght = str.length(); 
 	do
@@ -64,9 +64,75 @@ void my_split(const std::string& str, std::vector<std::string>& tokens, const st
 	}while ( prev < lenght );
 }
 
+float GetYPRValuesFromVector(std::vector<std::string> &tokens, float&fYaw, float&fPitch, float&fRoll, float&fdeltaT) {
+	size_t pos;
+	
+	std::string strToken = tokens.at(1);
+	pos = strToken.find("yaw=");
+	if(pos  != std::string::npos ) {
+		std::string Yaw = strToken.substr(pos+4);
+		if( is_number(Yaw) ) {
+			fYaw = std::stof(Yaw);
+#ifdef C_PRINTF_DEBUG
+			printf("Yaw[%s]\n",Yaw.c_str());
+#endif//C_PRINTF_DEBUG
+					//	}
+		}
+	}else{
+			fYaw=0.0f;
+	}
+	
+	strToken = tokens.at(2);
+	pos = strToken.find("pitch=");
+	if(pos  != std::string::npos ) {
+		std::string Pitch = strToken.substr(pos+6);
+		if( is_number(Pitch) ) {
+			fPitch = std::stof(Pitch);
+#ifdef C_PRINTF_DEBUG
+			printf("Pitch[%s]\n",Pitch.c_str());
+#endif//C_PRINTF_DEBUG
+					//	}
+		}
+	}else{
+		fPitch=0.0f;
+	}
+	
+	strToken = tokens.at(3);
+	pos = strToken.find("roll=");
+	if(pos  != std::string::npos ) {
+		std::string Roll = strToken.substr(pos+5);
+		if( is_number(Roll) ) {
+			fRoll = std::stof(Roll);
+#ifdef C_PRINTF_DEBUG
+			printf("Yaw[%s]\n",fRoll.c_str());
+#endif//C_PRINTF_DEBUG
+					//	}
+		}
+	}else{
+			fRoll=0.0f;
+	}
+	
+	strToken = tokens.at(4);
+	pos = strToken.find("delta=");
+	if(pos  != std::string::npos ) {
+		std::string DeltaT = strToken.substr(pos+6);
+		if( is_number(DeltaT) ) {
+			fdeltaT = std::stof(DeltaT);
+#ifdef C_PRINTF_DEBUG
+			printf("DeltaT[%s]\n",DeltaT.c_str());
+#endif//C_PRINTF_DEBUG
+					//	}
+		}
+	}else{
+			fdeltaT=0.0f;
+	}
+	return 0.0f;
+}
+
+
 /* Mario, Leal Fuentes
  * Get yaw pitch and roll values from previus tokens (string vector)
- */
+ * /
 int GetYPRValuesFromVector(std::vector<std::string> &tokens, float&fYaw, float&fPitch, float&fRoll, float&fdeltaT) {
 	std::vector<std::string>::iterator it;
 	size_t pos;
@@ -80,14 +146,14 @@ int GetYPRValuesFromVector(std::vector<std::string> &tokens, float&fYaw, float&f
 			
 			pos = str.find("yaw=");
 			if(pos  != std::string::npos ) {
-					if(str.length() >= 5 ) {
+					//if(str.length() >= 5 ) {
 						std::string Yaw = str.substr(pos+4);
 						if( is_number(Yaw) ) {
 							fYaw = std::stof(Yaw);
 #ifdef C_PRINTF_DEBUG
 							printf("Yaw[%s]\n",Yaw.c_str());
 #endif//C_PRINTF_DEBUG
-						}
+					//	}
 					}
 			}
 			pos = str.find("pitch=");
@@ -124,10 +190,8 @@ int GetYPRValuesFromVector(std::vector<std::string> &tokens, float&fYaw, float&f
 	}
 	return 0;
 }
+*/
 
-int la_puta_madre() {
-	return 0;
-}
 
 double msTimeElapsed() {
 	

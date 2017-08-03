@@ -46,7 +46,8 @@ int main(int argc, char* argv[]) {
 		std::vector<std::string> tokens;
 		
 		do{
-			Ardu.Readii(buffer, 1024+1);
+			//Ardu.Readii(buffer, 1024+1);
+			strcpy(buffer, "046Stx|yaw= 80.56|pitch=-18.43|roll= 10.29|End");
 #ifdef C_PRINTF_DEBUG
 			fprintf(stdout, "We are reading:[%s]\n", buffer);
 #endif//C_PRINTF_DEBUG
