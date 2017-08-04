@@ -17,9 +17,9 @@ bool is_number(const std::string& s);
 
 void my_split(const std::string& str, std::vector<std::string>& tokens, const std::string& delim);
 
-int GetYPRValuesFromVector(std::vector<std::string> &tokens, float&fYaw, float&fPitch, float&fRoll, float&fdeltaT);
+//int GetYPRValuesFromVector(std::vector<std::string> &tokens, float&fYaw, float&fPitch, float&fRoll, float&fdeltaT);
+float GetYPRValuesFromVector(std::vector<std::string> &tokens, float&fYaw, float&fPitch, float&fRoll, float&fdeltaT);
 
-int la_puta_madre();
 
 //using namespace std;
 extern std::chrono::steady_clock::time_point beforeT;

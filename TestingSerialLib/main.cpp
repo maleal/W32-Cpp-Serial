@@ -28,19 +28,6 @@
 
 std::chrono::steady_clock::time_point beforeT = std::chrono::steady_clock::now();
 
-
-
-/*
-bool is_number(const std::string& s)
-{
-	std::string::const_iterator it = s.begin();
-	while (it != s.end() && std::isdigit( *it )) ++it;
-	return !s.empty() && it == s.end();
-}
-*/
-
-
-
 int main(int argc, char* argv[]) {
 	char buffer[1024+1];
 
@@ -60,15 +47,16 @@ int main(int argc, char* argv[]) {
 		std::vector<std::string> tokens;
 		int i = 0;
 		do{
-			if (Ardu.Readii(buffer, 1024 + 1)) {
-#ifdef TC_PRINTF_DEBUG
-				fprintf(stdout, "We are reading:[%s]\n", buffer);
-#endif//TC_PRINTF_DEBUG
 
-				myStr.assign(buffer);
-				//remuving spaces
-				myStr.erase(remove_if(myStr.begin(), myStr.end(), isspace), myStr.end());
-
+			//Ardu.Readii(buffer, 1024+1);
+			strcpy(buffer, "046Stx|yaw= 80.56|pitch=-18.43|roll= 10.29|End");
+#ifdef C_PRINTF_DEBUG
+			fprintf(stdout, "We are reading:[%s]\n", buffer);
+#endif//C_PRINTF_DEBUG
+			
+			myStr.assign(buffer);
+			//remuving spaces
+			myStr.erase(remove_if(myStr.begin(), myStr.end(), isspace), myStr.end());
 #ifdef TC_PRINTF_DEBUG
 				fprintf(stdout, "WithOut Space[%s]\n", myStr.c_str());
 #endif//TC_PRINTF_DEBUG
