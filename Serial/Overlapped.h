@@ -27,6 +27,7 @@ public:
 	LONG Write(char* szBuffer);
 
 	LONG ShowError (LONG lError, LPCTSTR lptszMessage);
+	bool zChar_is_number(const char * str);
 };
 
 #endif //__OVERLAPPED_H

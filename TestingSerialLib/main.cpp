@@ -24,6 +24,7 @@
 #include <string>
 #include "Overlapped.h"
 
+#include <ctype.h>
 
 std::chrono::steady_clock::time_point beforeT = std::chrono::steady_clock::now();
 
@@ -33,7 +34,7 @@ int main(int argc, char* argv[]) {
 	try{
 		
 		CAsynSerial Ardu;
-		Ardu.Open(_T("COM1"),0,0);
+		Ardu.Open(_T("COM4"),0,0);
 		Ardu.Setup(CSerial::EBaud115200,CSerial::EData8,CSerial::EParNone,CSerial::EStop1);
 
 		//Ardu.Write("ready");
@@ -44,8 +45,9 @@ int main(int argc, char* argv[]) {
 				
 		float fYaw, fPitch, fRoll, fdeltaT;
 		std::vector<std::string> tokens;
-		
+		int i = 0;
 		do{
+
 			//Ardu.Readii(buffer, 1024+1);
 			strcpy(buffer, "046Stx|yaw= 80.56|pitch=-18.43|roll= 10.29|End");
 #ifdef C_PRINTF_DEBUG
@@ -55,23 +57,22 @@ int main(int argc, char* argv[]) {
 			myStr.assign(buffer);
 			//remuving spaces
 			myStr.erase(remove_if(myStr.begin(), myStr.end(), isspace), myStr.end());
+#ifdef TC_PRINTF_DEBUG
+				fprintf(stdout, "WithOut Space[%s]\n", myStr.c_str());
+#endif//TC_PRINTF_DEBUG
 
-#ifdef C_PRINTF_DEBUG
-			fprintf(stdout, "WithOut Space[%s]\n",myStr.c_str());
-#endif//C_PRINTF_DEBUG
-
-			my_split(myStr, tokens, delim);
-			GetYPRValuesFromVector(tokens, fYaw, fPitch, fRoll, fdeltaT);
-						
+				my_split(myStr, tokens, delim);
+				GetYPRValuesFromVector(tokens, fYaw, fPitch, fRoll, fdeltaT);
+			}
 			memset(buffer, '\0', 1024+1);
 			myStr.clear();
 			tokens.clear();
-			
+			i++;
 
-		}while(1);
-		
+		}while(i<500);
+		std::cin >> i;
 	}catch(std::exception &ex) {
-		fprintf(stderr, "Cosa:%s", ex.what()); 
+		fprintf(stderr, "Que Cosa:%s", ex.what()); 
 	}
 	return 0;
 };

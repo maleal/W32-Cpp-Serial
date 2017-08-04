@@ -1258,6 +1258,7 @@ LONG CSerial::Purge()
 	}
 
 	if (!::PurgeComm(m_hFile, PURGE_TXCLEAR | PURGE_RXCLEAR))
+	//if (!::PurgeComm(m_hFile, PURGE_TXCLEAR | PURGE_TXABORT | PURGE_RXCLEAR | PURGE_RXABORT))
 	{
 		// Set the internal error code
 		m_lLastError = ::GetLastError();

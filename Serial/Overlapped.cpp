@@ -286,7 +286,8 @@ LONG CAsynSerial::Read (char* szBuffer, int sizeofBuffer) {
 
 
 	LONG CAsynSerial::Readii (char* szBuffer, int sizeofBuffer) {
-		serial.Purge();
+		//int count;
+		//serial.Purge();
 		if(fContinue)
 		{
 			
@@ -360,11 +361,12 @@ LONG CAsynSerial::Read (char* szBuffer, int sizeofBuffer) {
 					// Handle data receive event
 					if (eEvent & CSerial::EEventRecv)
 					{
+#ifdef C_PRINTF_DEBUG
+						printf("\n### Data receive Event ###\n");
+#endif//C_PRINTF_DEBUG
 						// Read data, until there is nothing left
 						DWORD dwBytesRead = 0;
-						
-						
-						int count=0;
+						DWORD count=0;
 						do
 						{
 							// Read data from the COM-port
@@ -376,28 +378,46 @@ LONG CAsynSerial::Read (char* szBuffer, int sizeofBuffer) {
 						}while (count < 6);
 						szBuffer[6]='\0';
 #ifdef C_PRINTF_DEBUG
-						fprintf(stdout, "%s\n", szBuffer);
+						fprintf(stdout, "Head Read[%s]\n", szBuffer);
 #endif//C_PRINTF_DEBUG
-						if(!strncmp(&szBuffer[3], "STx", 3)) {
-							char tempBuff[4];
-							strncpy(tempBuff, szBuffer, 3);
-
-							int len = atoi(tempBuff);
-							do
-							{
-							
-								lLastError = this->serial.Read(&szBuffer[count], len-count, &dwBytesRead);
-								if (lLastError != ERROR_SUCCESS)
-									return this->ShowError(this->serial.GetLastError(), _T("Unable to read from COM-port."));
-								count+=dwBytesRead;
-							}while (count < len);
-							szBuffer[count]='\0';
+						DWORD i = 0;
+						//Si esta entre las longuitudes correctas y el string es Stx ...
+						while (szBuffer[i] != 'S' && i < 6) i++;
+						if ((i >= 2) && (i <= 4) && (szBuffer[i + 1] == 't') /*&& (szBuffer[i + 2] == 'x')*/) {
+							char tempBuff[5];
+							strncpy(tempBuff, szBuffer, i);
+							tempBuff[i]= '\0';
+							if (zChar_is_number(tempBuff)) {
 #ifdef C_PRINTF_DEBUG
-							// Display the data
-							fprintf(stdout, "%s\n", szBuffer);
+								fprintf(stdout, "zchar_is_number[%s]\n", tempBuff);
 #endif//C_PRINTF_DEBUG
+								int len = atoi(tempBuff);
+								do
+								{
+
+									lLastError = this->serial.Read(&szBuffer[count], len - count, &dwBytesRead);
+									if (lLastError != ERROR_SUCCESS)
+										return this->ShowError(this->serial.GetLastError(), _T("Unable to read from COM-port."));
+									count += dwBytesRead;
+								} while (count < len);
+								szBuffer[count] = '\0';
+#ifdef C_PRINTF_DEBUG
+								// Display the data
+								fprintf(stdout, "All Read[%s]\n", szBuffer);
+								//std::cin >> len;
+#endif//C_PRINTF_DEBUG
+								return 1;
+							}
+							else {
+#ifdef C_PRINTF_DEBUG
+								fprintf(stdout, "Not Number Read[%s]\n", szBuffer);
+#endif//C_PRINTF_DEBUG
+								serial.Purge();
+								return 0;
+							}
+
+
 						}
-					
 					}
 				}
 				break;
@@ -417,9 +437,22 @@ LONG CAsynSerial::Read (char* szBuffer, int sizeofBuffer) {
 				break;
 			}
 		}else
-			ShowError(0, _T("iinternal 'fContinue' variable is set to false."));
+			ShowError(0, _T("internal 'fContinue' variable is set to false."));
 
 		// Close the port again
 		//serial.Close();
 		return 0;
+	}
+
+	bool CAsynSerial::zChar_is_number(const char * str) {
+		while (*str != '\0')
+		{
+			if (*str < '0' || *str > '9') {
+				if (*str != '.' || *str != '-') {
+					return false;
+				}
+			}
+			str++;
+		}
+		return true;
 	}

@@ -58,6 +58,9 @@ void my_split(const std::string& str, std::vector<std::string>& tokens, const st
 		if(pos != prev && pos > prev) {
 			tmp= str.substr(prev, pos-prev);
 			tokens.push_back(tmp);
+#ifdef C_PRINTF_DEBUG
+			//fprintf(stdout, "Tokens[%s]\n", tmp.c_str());
+#endif//C_PRINTF_DEBUG
 			prev=pos+1;
 		}
 		
@@ -140,7 +143,7 @@ int GetYPRValuesFromVector(std::vector<std::string> &tokens, float&fYaw, float&f
 	{
 			std::string str = *it;
 #ifdef C_PRINTF_DEBUG
-			fprintf(stdout, "Tokens[%s]\n",str.c_str());
+			fprintf(stdout, "Token[%s]\n",str.c_str());
 #endif//C_PRINTF_DEBUG
 
 			
@@ -151,7 +154,7 @@ int GetYPRValuesFromVector(std::vector<std::string> &tokens, float&fYaw, float&f
 						if( is_number(Yaw) ) {
 							fYaw = std::stof(Yaw);
 #ifdef C_PRINTF_DEBUG
-							printf("Yaw[%s]\n",Yaw.c_str());
+							//fprintf(stdout, "Yaw[%s]\n",Yaw.c_str());
 #endif//C_PRINTF_DEBUG
 					//	}
 					}
@@ -183,6 +186,9 @@ int GetYPRValuesFromVector(std::vector<std::string> &tokens, float&fYaw, float&f
 					if (is_number(DeltaT)) {
 
 						fdeltaT = std::stof(DeltaT);
+#ifdef C_PRINTF_DEBUG
+						printf("fdeltaT[%s]\n", DeltaT.c_str());
+#endif//C_PRINTF_DEBUG
 					}
 				}
 			}
