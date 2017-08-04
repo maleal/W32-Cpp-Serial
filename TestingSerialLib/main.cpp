@@ -61,9 +61,9 @@ int main(int argc, char* argv[]) {
 				fprintf(stdout, "WithOut Space[%s]\n", myStr.c_str());
 #endif//TC_PRINTF_DEBUG
 
-				my_split(myStr, tokens, delim);
-				GetYPRValuesFromVector(tokens, fYaw, fPitch, fRoll, fdeltaT);
-			}
+			my_split(myStr, tokens, delim);
+			GetYPRValuesFromVector(tokens, fYaw, fPitch, fRoll, fdeltaT);
+	
 			memset(buffer, '\0', 1024+1);
 			myStr.clear();
 			tokens.clear();
