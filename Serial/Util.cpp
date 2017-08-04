@@ -42,7 +42,7 @@ bool is_number(const std::string& s)
 void my_split(const std::string& str, std::vector<std::string>& tokens, const std::string& delim)
 {
 	//El formato del msg que recibo desde Arduino esta armado de la siguiente forma:
-	//043STx|yaw= 80.56|pitch= 18.43|roll= 10.29|End
+	//043Stx|yaw= 80.56|pitch= 18.43|roll= 10.29|End
 	std::string tmp;
 	size_t prev = 0, pos, lenght = str.length(); 
 	do
@@ -58,6 +58,9 @@ void my_split(const std::string& str, std::vector<std::string>& tokens, const st
 		if(pos != prev && pos > prev) {
 			tmp= str.substr(prev, pos-prev);
 			tokens.push_back(tmp);
+#ifdef C_PRINTF_DEBUG
+			//fprintf(stdout, "Tokens[%s]\n", tmp.c_str());
+#endif//C_PRINTF_DEBUG
 			prev=pos+1;
 		}
 		
@@ -74,7 +77,7 @@ int GetYPRValuesFromVector(std::vector<std::string> &tokens, float&fYaw, float&f
 	{
 			std::string str = *it;
 #ifdef C_PRINTF_DEBUG
-			fprintf(stdout, "Tokens[%s]\n",str.c_str());
+			fprintf(stdout, "Token[%s]\n",str.c_str());
 #endif//C_PRINTF_DEBUG
 
 			
@@ -85,7 +88,7 @@ int GetYPRValuesFromVector(std::vector<std::string> &tokens, float&fYaw, float&f
 						if( is_number(Yaw) ) {
 							fYaw = std::stof(Yaw);
 #ifdef C_PRINTF_DEBUG
-							printf("Yaw[%s]\n",Yaw.c_str());
+							//fprintf(stdout, "Yaw[%s]\n",Yaw.c_str());
 #endif//C_PRINTF_DEBUG
 						}
 					}
@@ -117,6 +120,9 @@ int GetYPRValuesFromVector(std::vector<std::string> &tokens, float&fYaw, float&f
 					if (is_number(DeltaT)) {
 
 						fdeltaT = std::stof(DeltaT);
+#ifdef C_PRINTF_DEBUG
+						printf("fdeltaT[%s]\n", DeltaT.c_str());
+#endif//C_PRINTF_DEBUG
 					}
 				}
 			}
