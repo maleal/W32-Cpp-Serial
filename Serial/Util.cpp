@@ -77,7 +77,7 @@ float GetYPRValuesFromVector(std::vector<std::string> &tokens, float&fYaw, float
 		if( is_number(Yaw) ) {
 			fYaw = std::stof(Yaw);
 #ifdef C_PRINTF_DEBUG
-			printf("Yaw[%s]\n",Yaw.c_str());
+			fprintf(stdout, "Yaw[%s]\n",Yaw.c_str());
 #endif//C_PRINTF_DEBUG
 					//	}
 		}
@@ -92,7 +92,7 @@ float GetYPRValuesFromVector(std::vector<std::string> &tokens, float&fYaw, float
 		if( is_number(Pitch) ) {
 			fPitch = std::stof(Pitch);
 #ifdef C_PRINTF_DEBUG
-			printf("Pitch[%s]\n",Pitch.c_str());
+			fprintf(stdout, "Pitch[%s]\n",Pitch.c_str());
 #endif//C_PRINTF_DEBUG
 					//	}
 		}
@@ -107,7 +107,7 @@ float GetYPRValuesFromVector(std::vector<std::string> &tokens, float&fYaw, float
 		if( is_number(Roll) ) {
 			fRoll = std::stof(Roll);
 #ifdef C_PRINTF_DEBUG
-			printf("Yaw[%s]\n",fRoll.c_str());
+			fprintf(stdout, "Roll[%s]\n", Roll.c_str());
 #endif//C_PRINTF_DEBUG
 					//	}
 		}
@@ -122,7 +122,7 @@ float GetYPRValuesFromVector(std::vector<std::string> &tokens, float&fYaw, float
 		if( is_number(DeltaT) ) {
 			fdeltaT = std::stof(DeltaT);
 #ifdef C_PRINTF_DEBUG
-			printf("DeltaT[%s]\n",DeltaT.c_str());
+			printf("aRDUINO DeltaT[%s]\n",DeltaT.c_str());
 #endif//C_PRINTF_DEBUG
 					//	}
 		}

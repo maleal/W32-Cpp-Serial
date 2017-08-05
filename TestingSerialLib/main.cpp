@@ -48,11 +48,11 @@ int main(int argc, char* argv[]) {
 		int i = 0;
 		do{
 
-			//Ardu.Readii(buffer, 1024+1);
-			strcpy(buffer, "046Stx|yaw= 80.56|pitch=-18.43|roll= 10.29|End");
-#ifdef C_PRINTF_DEBUG
+			Ardu.Readii(buffer, 1024+1);
+			//strcpy(buffer, "046Stx|yaw= 80.56|pitch=-18.43|roll= 10.29|End");
+#ifdef TC_PRINTF_DEBUG
 			fprintf(stdout, "We are reading:[%s]\n", buffer);
-#endif//C_PRINTF_DEBUG
+#endif//TC_PRINTF_DEBUG
 			
 			myStr.assign(buffer);
 			//remuving spaces
