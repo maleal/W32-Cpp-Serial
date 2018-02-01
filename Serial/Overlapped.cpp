@@ -383,7 +383,7 @@ LONG CAsynSerial::Read (char* szBuffer, int sizeofBuffer) {
 						DWORD i = 0;
 						//Si esta entre las longuitudes correctas y el string es Stx ...
 						while (szBuffer[i] != 'S' && i < 6) i++;
-						if ((i >= 2) && (i <= 4) && (szBuffer[i + 1] == 't') /*&& (szBuffer[i + 2] == 'x')*/) {
+						if ((i >= 2) && (i <= 4) && (szBuffer[i + 1] == 't') && (szBuffer[i + 2] == 'x')) {
 							char tempBuff[5];
 							strncpy(tempBuff, szBuffer, i);
 							tempBuff[i]= '\0';
@@ -415,8 +415,6 @@ LONG CAsynSerial::Read (char* szBuffer, int sizeofBuffer) {
 								serial.Purge();
 								return 0;
 							}
-
-
 						}
 					}
 				}
